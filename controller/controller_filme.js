@@ -5,6 +5,12 @@
 * Versão: 1.0                                                                                                                               *
 *********************************************************************************************************************************************/
 
+// Import do arquivo de configurações do projeto
+const message = require('../modulo/config.js')
+
+// Import do arquivo DAP para manipular dados do BD
+const filmesDAO = require('../model/DAO/filme.js')
+
 // Função para inserir um novo Filme no Banco de Dados
 const setInserirNovoFilme = async function(){
 
@@ -23,11 +29,50 @@ const setExcluirFilme = async function(id){
 // Função para retornar todos os filmes do banco de dados
 const getListarFilmes = async function(){
 
+    // Cria uma variável do tipo JSON
+    let filmesJSON = {}
+
+    // Chama a função do DAO para buscar os dados no BD
+    let dadosFilmes = await filmesDAO.selectAllFilmes()
+
+    // Verifica se existem dados retornados do DAO
+    if (dadosFilmes) {
+        // Montando o JSON para retornar para o APP
+        filmesJSON.filmes = dadosFilmes
+        filmesJSON.quantidade = dadosFilmes.length
+        filmesJSON.status_code = 200
+        // Retorna o JSON montado
+        return filmesJSON
+    } else {
+        // Return false quando não houverem dados
+        return false
+    }
 }
 
 // Funço para buscar filme pelo ID
 const getBuscarFilme = async function(id){
+    // Recebe o Id do filme
+    let idFilme = id;
+    // Variavel para criar o JSON de retorno do filme
+    let filmeJSON = {}
 
+    // Validação para ID vazio, indefinido ou não numérico
+    if(idFilme == '' || idFilme == undefined || isNaN(idFilme)) {
+        return message.ERROR_INVALID_ID
+    } else {
+        // Solicita para o DAO a busca do filme pelo ID
+        let dadosFilme = await filmesDAO.selectByIdFilme(idFilme)
+
+        // Validalção para verificar se existem dados encontrados
+        if(dadosFilme){
+                filmeJSON.filme = dadosFilme;
+                filmeJSON.status_code = 200;
+
+                return filmeJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    }
 }
 
 module.exports = {

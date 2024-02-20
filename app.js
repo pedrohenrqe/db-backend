@@ -26,6 +26,7 @@ const bodyParser = require('body-parser')
 
 const app = express()
 
+
 app.use((request, response, next) => {
 
     response.header('Access-Control-Allow-Origin', '*')
@@ -36,10 +37,46 @@ app.use((request, response, next) => {
 
 })
 
-app.get('/ACME filmes/filmes', async(request, response, next) => {
+/******************************** Imports de arquivos e bibliotecas do Projeto *********************************/
+
+    const controllerFilmes = require('./controller/controller_filme.js')
+
+/***************************************************************************************************************/
+
+//EndPoint: Retorna os dados do arquivo JSON
+app.get('/AcmeFilmes/filmes', async(request, response, next) => {
 
     response.json(functions.listarFilmes())
     response.status(200)
+})
+
+//EndPoint: Retorna os dados do Banco de Dados
+app.get('/v2/acmefilmes/filmes', cors(), async function(request, response, next){
+    
+    // Chama a função para retornar os dados do filme
+    let dadosFilmes = await controllerFilmes.getListarFilmes()
+
+    // Validação para verificar se existem dados
+    if (dadosFilmes){
+        response.json(dadosFilmes)
+        response.status(200)
+    } else {
+        response.json({message: 'Nenhum registro encontrado'})
+        response.status(404)
+    }
+
+})
+
+//EndPoint: Retorna os dados do filme filtrando pelo ID
+app.get('/v2/acmefilmes/filme/:id', cors(), async function(request, response, next){
+    // Recebe o ID da requisição do Filme
+    let idFilme = request.params.id
+    
+    // Solicita para a controller o Filme filtrando pelo ID
+    let dadosFilme = await controllerFilmes.getBuscarFilme(idFilme)
+
+    response.json(dadosFilme)
+    response.status(dadosFilme.status_code)
 })
 
 app.listen('8080', function(){

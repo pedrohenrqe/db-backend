@@ -12,22 +12,22 @@ const message = require('../modulo/config.js')
 const filmesDAO = require('../model/DAO/filme.js')
 
 // Função para inserir um novo Filme no Banco de Dados
-const setInserirNovoFilme = async function(){
+const setInserirNovoFilme = async function () {
 
 }
 
 // Função para atualizar Filme existente 
-const setAtualizarFilme = async function(){
+const setAtualizarFilme = async function () {
 
 }
 
 // Função para excluir um filme existente
-const setExcluirFilme = async function(id){
+const setExcluirFilme = async function (id) {
 
 }
 
 // Função para retornar todos os filmes do banco de dados
-const getListarFilmes = async function(){
+const getListarFilmes = async function () {
 
     // Cria uma variável do tipo JSON
     let filmesJSON = {}
@@ -50,27 +50,31 @@ const getListarFilmes = async function(){
 }
 
 // Funço para buscar filme pelo ID
-const getBuscarFilme = async function(id){
+const getBuscarFilme = async function (id) {
     // Recebe o Id do filme
     let idFilme = id;
     // Variavel para criar o JSON de retorno do filme
     let filmeJSON = {}
 
     // Validação para ID vazio, indefinido ou não numérico
-    if(idFilme == '' || idFilme == undefined || isNaN(idFilme)) {
+    if (idFilme == '' || idFilme == undefined || isNaN(idFilme)) {
         return message.ERROR_INVALID_ID
     } else {
         // Solicita para o DAO a busca do filme pelo ID
         let dadosFilme = await filmesDAO.selectByIdFilme(idFilme)
 
-        // Validalção para verificar se existem dados encontrados
-        if(dadosFilme){
+        if (dadosFilme) {
+            // Validação para verificar se existem dados encontrados
+            if (dadosFilme.length > 0) {
                 filmeJSON.filme = dadosFilme;
                 filmeJSON.status_code = 200;
 
                 return filmeJSON
+            } else {
+                return message.ERROR_NOT_FOUND
+            }
         } else {
-            return message.ERROR_NOT_FOUND
+            return message.ERROR_INTERNAL_SERVER_BD
         }
     }
 }

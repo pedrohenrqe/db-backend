@@ -75,8 +75,8 @@ app.get('/v2/acmefilmes/filme/:id', cors(), async function(request, response, ne
     // Solicita para a controller o Filme filtrando pelo ID
     let dadosFilme = await controllerFilmes.getBuscarFilme(idFilme)
 
-    response.json(dadosFilme)
     response.status(dadosFilme.status_code)
+    response.json(dadosFilme)
 })
 
 app.listen('8080', function(){

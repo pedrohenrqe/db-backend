@@ -14,7 +14,7 @@
 *       npm install prisma --save
 *       npm install @prisma/client --save
 *
-*       Após a instalação do prima, devemos rodar o comando abaixo para inicializar o prisma
+*       Após a instalação do prisma, devemos rodar o comando abaixo para inicializar o prisma
 *       npx prisma init
 *
 * 
@@ -36,6 +36,9 @@ app.use((request, response, next) => {
     next()
 
 })
+
+// Cria um objeto do tipo JSON para receber os dados via Body nas requisições POST ou PUT
+const bodyParserJSON = bodyParser.json()
 
 /******************************** Imports de arquivos e bibliotecas do Projeto *********************************/
 
@@ -79,6 +82,21 @@ app.get('/v2/acmefilmes/filme/:id', cors(), async function(request, response, ne
     response.json(dadosFilme)
 })
 
+//EndPoint: Inserir novos filmes no Banco de Dados
+    // Não esquecer de colocar o bodyParserJSON que é quem define formato de chegada dos dados
+    // Obs: Esse objeto foi criado no inicio do projeto
+app.post('/v2/acmefilmes/filme', cors(), bodyParserJSON, async function(request, response, next){
+
+    // Recene os dados encaminhados na requisição do body (JSON)
+    let dadosBody = request.body
+
+    // Encaminha os dados da requisição para a controller enviar para o BD
+    let resultDados = await controllerFilmes.setInserirNovoFilme(dadosBody)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
 app.listen('8080', function(){
-    console.log('teste')
+    console.log('API rodando!!!')
 })

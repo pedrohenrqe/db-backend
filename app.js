@@ -1,7 +1,7 @@
 /*************************************************************************************
 * Objetivo: Arquivo para realizar as resquisições de filmes                          *
 * Data: 30/01/2024                                                                   *
-* Autor: Pedro                                                                       *
+* Autor: Pedro Barbosa                                                                      *
 * Versão: 1.0                                                                        *
 **************************************************************************************/
 
@@ -30,8 +30,8 @@ const app = express()
 app.use((request, response, next) => {
 
     response.header('Access-Control-Allow-Origin', '*')
-    response.header('Access-Control-Allow-Methods', 'GET, POST')
-    app.use(cors)
+    response.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    app.use(cors())
 
     next()
 
@@ -87,12 +87,14 @@ app.get('/v2/acmefilmes/filme/:id', cors(), async function(request, response, ne
     // Obs: Esse objeto foi criado no inicio do projeto
 app.post('/v2/acmefilmes/filme', cors(), bodyParserJSON, async function(request, response, next){
 
+    let contentType = request.headers['content-type']
+
     // Recene os dados encaminhados na requisição do body (JSON)
     let dadosBody = request.body
 
     // Encaminha os dados da requisição para a controller enviar para o BD
-    let resultDados = await controllerFilmes.setInserirNovoFilme(dadosBody)
-
+    let resultDados = await controllerFilmes.setInserirNovoFilme(dadosBody, contentType)
+    
     response.status(resultDados.status_code)
     response.json(resultDados)
 })

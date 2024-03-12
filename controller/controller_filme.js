@@ -1,7 +1,7 @@
 /********************************************************************************************************************************************
 * Objetivo: Arquivo responsável pela interação entre o APP e a MODEL, teremos todas as tratativas e regra de negócios para o CRUD de Filmes *
 * Data: 30/01/2024                                                                                                                          *
-* Autor: Pedro                                                                                                                              *
+* Autor: Pedro Barbosa                                                                                                                            *
 * Versão: 1.0                                                                                                                               *
 *********************************************************************************************************************************************/
 
@@ -12,62 +12,69 @@ const message = require('../modulo/config.js')
 const filmesDAO = require('../model/DAO/filme.js')
 
 // Função para inserir um novo Filme no Banco de Dados
-const setInserirNovoFilme = async function (dadosFilme) {
-    
-    // Cria a variável JSON
-    let resultDadosFilme = {}
+const setInserirNovoFilme = async function (dadosFilme, contentType) {
 
-    // Validação para verificar campos obrigatóriose e consistência de dados
-    if (
-        dadosFilme.nome                    == '' || dadosFilme.nome            == undefined || dadosFilme.nome.length            > 80    || 
-        dadosFilme.sinopse                 == '' || dadosFilme.sinopse         == undefined || dadosFilme.sinopse.length         > 65000 ||
-        dadosFilme.duracao                 == '' || dadosFilme.duracao         == undefined || dadosFilme.duracao.length         > 8     ||
-        dadosFilme.data_lancamento         == '' || dadosFilme.data_lancamento == undefined || dadosFilme.data_lancamento.length > 10    ||
-        dadosFilme.foto_capa               == '' || dadosFilme.foto_capa       == undefined || dadosFilme.foto_capa.length       > 200   ||
-        dadosFilme.valor_unitario.length    > 8  
-    ) {
-        return message.ERROR_REQUIRED_FIELDS // 400 Campos obrigatórios / Incorretos
-    } else {
+    try {
 
-        // Variável para validar se poderemos chamar o DAO para inserir os dados
-        let dadosValited = true;
+        if (String(contentType).toLocaleLowerCase() == 'application/json')
 
-        // Validação de digitação para a data de relançamento
-        // Que não é campo obrigatório
-        if (    dadosFilme.data_relancamento != null && 
+            // Cria a variável JSON
+            let resultDadosFilme = {}
+
+        // Validação para verificar campos obrigatóriose e consistência de dados
+        if (
+            dadosFilme.nome == '' || dadosFilme.nome == undefined || dadosFilme.nome.length > 80 ||
+            dadosFilme.sinopse == '' || dadosFilme.sinopse == undefined || dadosFilme.sinopse.length > 65000 ||
+            dadosFilme.duracao == '' || dadosFilme.duracao == undefined || dadosFilme.duracao.length > 8 ||
+            dadosFilme.data_lancamento == '' || dadosFilme.data_lancamento == undefined || dadosFilme.data_lancamento.length > 10 ||
+            dadosFilme.foto_capa == '' || dadosFilme.foto_capa == undefined || dadosFilme.foto_capa.length > 200 ||
+            dadosFilme.valor_unitario.length > 8
+        ) {
+            return message.ERROR_REQUIRED_FIELDS // 400 Campos obrigatórios / Incorretos
+        } else {
+
+            // Variável para validar se poderemos chamar o DAO para inserir os dados
+            let dadosValited = true;
+
+            // Validação de digitação para a data de relançamento
+            // Que não é campo obrigatório
+            if (dadosFilme.data_relancamento != null &&
                 dadosFilme.data_relancamento != undefined ||
                 dadosFilme.data_relancamento != ""
-            ){
-                if(dadosFilme.data_relancamento.length != 10)
+            ) {
+                if (dadosFilme.data_relancamento.length != 10)
                     return message.ERROR_REQUIRED_FIELDS // 400 Campos Obrigatórios / Incorretos
                 else
                     dadosValited = true // Se a data estiver com exatamente 10 char
-            }   else {
-                    dadosValited = true // Se a data não existir nos dados
+            } else {
+                dadosValited = true // Se a data não existir nos dados
             }
-        
 
-        if(dadosValited){
 
-        // Encaminha os dados para o DAO inserir no BD
-        let novoFilme = await filmesDAO.insertFilme(dadosFilme) 
+            if (dadosValited) {
 
-        // Validação para verificar se os dados foram inseridos pelo DAO no BD
-        if (novoFilme) {
-            // Cria o padrão de JSON para retorno dos dados criados no BD
-            resultDadosFilme.status = message.SUCCESS_CREATED_ITEM.status
-            resultDadosFilme.status_code = message.SUCCESS_CREATED_ITEM.status_code
-            resultDadosFilme.message = message.SUCCESS_CREATED_ITEM.message
-            resultDadosFilme.filme = dadosFilme
+                // Encaminha os dados para o DAO inserir no BD
+                let novoFilme = await filmesDAO.insertFilme(dadosFilme)
 
-            return resultDadosFilme
-        } else {
-            return message.ERROR_INTERNAL_SERVER_BD // 500 Erro na camada do DAO
-        }
+                // Validação para verificar se os dados foram inseridos pelo DAO no BD
+                if (novoFilme) {
+                    // Cria o padrão de JSON para retorno dos dados criados no BD
+                    resultDadosFilme.status = message.SUCCESS_CREATED_ITEM.status
+                    resultDadosFilme.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                    resultDadosFilme.message = message.SUCCESS_CREATED_ITEM.message
+                    resultDadosFilme.filme = dadosFilme
 
-        }   
-    }
+                    return resultDadosFilme
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_BD // 500 Erro na camada do DAO
+                }
+
+            } 
+
+    } 
 }
+
+
 
 // Função para atualizar Filme existente 
 const setAtualizarFilme = async function () {
@@ -79,7 +86,7 @@ const setExcluirFilme = async function (id) {
 
 }
 
-// Função para retornar todos os filmes do banco de dados
+// Função para retornar todos os filmes do banco de dados 
 const getListarFilmes = async function () {
 
     // Cria uma variável do tipo JSON
@@ -133,9 +140,9 @@ const getBuscarFilme = async function (id) {
 }
 
 module.exports = {
-    setInserirNovoFilme,
     setAtualizarFilme,
+    setInserirNovoFilme,
     setExcluirFilme,
-    getListarFilmes,
-    getBuscarFilme
+    getBuscarFilme,
+    getListarFilmes
 }

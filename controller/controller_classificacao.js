@@ -1,5 +1,5 @@
 //import do arquivo que possui as mensagens padrão
-const message = require('../modulo/config.js')
+const message = require('../module/config.js')
 
 //import do arquivo que realizará as requisições ao banco de dad os
 const classificacaoDAO = require('../model/DAO/classificacao.js')
@@ -68,12 +68,13 @@ const setInserirNovaClassificacao = async function (dadosClassificacao, contentT
             //objeto que retorna os dados da requisição
             let novaClassificacaoJson = {}
 
+            
             //validação do campos da requisição
             if (
-                dadosClassificacao.faixa_etaria == '' || dadosClassificacao.classificacao == '' || dadosClassificacao.caracteristicas == ''                      || dadosClassificacao.foto_classificacao == ''        ||
-                dadosClassificacao.faixa_etaria == null || dadosClassificacao.classificacao == null || dadosClassificacao.caracteristicas == null                || dadosClassificacao.foto_classificacao == null      ||
-                dadosClassificacao.faixa_etaria == undefined || dadosClassificacao.classificacao == undefined || dadosClassificacao.caracteristicas == undefined || dadosClassificacao.foto_classificacao == undefined ||
-                dadosClassificacao.faixa_etaria.length > 5 || dadosClassificacao.classificacao.length > 7 || dadosClassificacao.caracteristicas.length > 10000   || dadosClassificacao.foto_classificacao.length > 300
+                dadosClassificacao.faixa_etaria == '' || dadosClassificacao.classificacao == '' || dadosClassificacao.caracteristica == ''                      || dadosClassificacao.icone == ''        ||
+                dadosClassificacao.faixa_etaria == null || dadosClassificacao.classificacao == null || dadosClassificacao.caracteristica == null                || dadosClassificacao.icone == null      ||
+                dadosClassificacao.faixa_etaria == undefined || dadosClassificacao.classificacao == undefined || dadosClassificacao.caracteristica == undefined || dadosClassificacao.icone == undefined ||
+                dadosClassificacao.faixa_etaria.length > 2 || dadosClassificacao.classificacao.length > 100 || dadosClassificacao.caracteristica.length > 100   || dadosClassificacao.icone.length > 100
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
@@ -81,6 +82,7 @@ const setInserirNovaClassificacao = async function (dadosClassificacao, contentT
                 let novaClassificacao = await classificacaoDAO.insertCLassificacao(dadosClassificacao)
                 let novoId = await classificacaoDAO.selectIdLastClassificacao()
 
+                console.log(novaClassificacao);
                 //validação para verificar se a DAO inseriu dados
                 if (novaClassificacao) {
                     novaClassificacaoJson.id = Number(novoId[0].id)
@@ -88,6 +90,7 @@ const setInserirNovaClassificacao = async function (dadosClassificacao, contentT
                     novaClassificacaoJson.status_code = message.SUCCESS_CREATED_ITEM.status_code
                     novaClassificacaoJson.status = message.SUCCESS_CREATED_ITEM.message
 
+                   
                     return novaClassificacaoJson //201
                 }else{
                     return message.ERROR_INTERNAL_SERVER_DB //500
@@ -147,10 +150,10 @@ const setAtualizarCLassificacao = async function(id, dadosClassificacao, content
 
             //validação do campos da requisição
             if (
-                dadosClassificacao.faixa_etaria == '' || dadosClassificacao.classificacao == '' || dadosClassificacao.caracteristicas == ''                      || dadosClassificacao.foto_classificacao == ''        ||
-                dadosClassificacao.faixa_etaria == null || dadosClassificacao.classificacao == null || dadosClassificacao.caracteristicas == null                || dadosClassificacao.foto_classificacao == null      ||
-                dadosClassificacao.faixa_etaria == undefined || dadosClassificacao.classificacao == undefined || dadosClassificacao.caracteristicas == undefined || dadosClassificacao.foto_classificacao == undefined ||
-                dadosClassificacao.faixa_etaria.length > 5 || dadosClassificacao.classificacao.length > 7 || dadosClassificacao.caracteristicas.length > 10000   || dadosClassificacao.foto_classificacao.length > 300
+                dadosClassificacao.faixa_etaria == '' || dadosClassificacao.classificacao == '' || dadosClassificacao.caracteristica == ''                      || dadosClassificacao.icone == ''        ||
+                dadosClassificacao.faixa_etaria == null || dadosClassificacao.classificacao == null || dadosClassificacao.caracteristica == null                || dadosClassificacao.icone == null      ||
+                dadosClassificacao.faixa_etaria == undefined || dadosClassificacao.classificacao == undefined || dadosClassificacao.caracteristica == undefined || dadosClassificacao.icone == undefined ||
+                dadosClassificacao.faixa_etaria.length > 5 || dadosClassificacao.classificacao.length > 7 || dadosClassificacao.caracteristica.length > 10000   || dadosClassificacao.icone.length > 300
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             }

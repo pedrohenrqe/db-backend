@@ -1,23 +1,73 @@
-var dadosFilmes = require('../modulo/filmes.js')
+/****************************************************
+ * Autor: Pedro Barbosa
+ * Objetivo: Projeto Empresa – “Filmes Online Acme”
+ * Data: 25/01/2024
+ * Versão:1.0
+ ****************************************************/
 
-const listarFilmes = () => {
-    let filmes = dadosFilmes.filmes.filmes
-    let filmesArray = []
+var filmes = require('../modulo/filmes.js')
+const filmesJson = filmes.filmes
 
-    filmes.forEach((filme) => {
-        let filmesInfo = {
-            id: filme.id,
-            nome: filme.nome,
-            duracao: filme.duracao,
-            data_lancamento: filme.data_lancamento
-        }
+const getFilmes = function(){
+    
+    let arrayLocal = []
+    let JSonLocal ={}
 
-        filmesArray.push(filmesInfo)
+    filmesJson.filmes.forEach(function(movies){
+        let filmesLocal = {}
+        filmesLocal.nome = movies.nome
+        filmesLocal.data_lancamento = movies.data_lancamento
+        filmesLocal.data_relancamento = movies.data_relancamento
+        filmesLocal.duracao = movies.duracao
+        filmesLocal.sinopse = movies.sinopse
+        filmesLocal.valor_unitario = movies.valor_unitario
 
+        arrayLocal.push(filmesLocal)
+        JSonLocal.filmes = arrayLocal
     })
-
-    let filmesJSON = {filmesArray}
-    return filmesJSON
+    
+    return(JSonLocal)
 }
 
-console.log (listarFilmes())
+const getFilmesId = function(id){
+    let status = false
+    let filmeFiltrado = {}
+    let arrayLocal = []
+    let infoFilme = {}
+    let idRecebido = id
+    
+    filmesJson.filmes.forEach(function(idFilme){
+        
+        
+        
+        if(idFilme.id == idRecebido  ){
+            infoFilme = {
+            IdFilme:idFilme.nome,
+            Lancamento :idFilme.data_lancamento,
+            Relancamento:idFilme.data_relancamento,
+            duracao :idFilme.duracao,
+            sinopse : idFilme.sinopse,
+            valor_unitario : idFilme.valor_unitario
+         }
+
+        arrayLocal.push(infoFilme)
+            status = true
+        }
+
+        
+    })
+    filmeFiltrado.filmes = arrayLocal
+
+    if(status){
+        return filmeFiltrado
+        
+    }else{
+        return false
+    }
+}
+
+console.log(getFilmesId(2))
+module.exports = {
+    getFilmes,
+    getFilmesId
+}

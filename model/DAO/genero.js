@@ -1,17 +1,11 @@
-/********************************************************************************************************************************************
-* Objetivo: Arquivo responsável pelo acesso ao banco de dados MySql, CRUD tabela de gênero *
-* Data: 30/01/2024                                                                                                                          *
-* Autor: Pedro Barbosa                                                                                                                      *
-* Versão: 1.0                                                                                                                               *
-*********************************************************************************************************************************************/
+//Importando a biblioteca do prisma client
+const {PrismaClient} = require('@prisma/client');
+ 
+ //Instancia da classe prisma client
+ const prisma = new PrismaClient()
 
-//import da biblioteca prisma
-const {PrismaClient} = require('@prisma/client')
 
-//instância do prisma
-const prisma = new PrismaClient() 
-
-//função que lista todos os gêneros do banco de dados
+ //função que lista todos os gêneros do banco de dados
 const selectAllGeneros = async function(){
     try {
         let sql = 'select * from tbl_genero'
@@ -51,12 +45,10 @@ const insertGenero = async function(dadosGenero){
         `
         insert into tbl_genero
         (
-            nome, 
-            descricao_genero
+            nome
         )
         values(
-            '${dadosGenero.nome}',
-            '${dadosGenero.descricao_genero}'
+            '${dadosGenero.nome}'
               )
         `
         let rsGenero = await prisma.$queryRawUnsafe(sql)

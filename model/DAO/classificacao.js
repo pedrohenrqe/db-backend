@@ -1,10 +1,4 @@
-/********************************************************************************************************************************************
-* Objetivo: Arquivo responsável pelo acesso ao banco de dados MySql, CRUD tabela de classificação *
-* Data: 30/01/2024                                                                                                                          *
-* Autor: Pedro Barbosa                                                                                                                      *
-* Versão: 1.0                                                                                                                               *
-*********************************************************************************************************************************************/
-
+//import da biblioteca prisma client
 const {PrismaClient} = require('@prisma/client') 
 
 //instância da classe prisma client
@@ -17,13 +11,13 @@ const insertCLassificacao = async function(dadosClassificacao){
         let sql = `insert into tbl_classificacao(
             faixa_etaria,
             classificacao,
-            caracteristicas,
-            foto_classificacao
+            caracteristica,
+            icone
         )values(
             '${dadosClassificacao.faixa_etaria}',
             '${dadosClassificacao.classificacao}',
-            '${dadosClassificacao.caracteristicas}',
-            '${dadosClassificacao.foto_classificacao}'
+            '${dadosClassificacao.caracteristica}',
+            '${dadosClassificacao.icone}'
         )`
 
         let rsClassificacao = await prisma.$executeRawUnsafe(sql)
@@ -54,9 +48,11 @@ const selectByIdClassificacao = async function(id){
         //script sql
         let sql = `select * from tbl_classificacao where id = ${id}`
 
+        console.log(sql)
         //executa o script no banco de dados
         let rsClassificacao = await prisma.$queryRawUnsafe(sql)
 
+        
         if(rsClassificacao){
             return rsClassificacao
         }else{
